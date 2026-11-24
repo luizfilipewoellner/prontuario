@@ -181,6 +181,61 @@
   #viewerBody iframe{position:absolute;inset:0;width:100%;height:100%;border:none;display:block;}
   #viewerBody img{max-width:100%;}
 
+  .fotos-bar{display:flex;align-items:center;gap:10px;margin:4px 0 12px;flex-wrap:wrap;}
+  .fotos-bar select{min-width:220px;padding:8px 10px;border:1px solid #d3cdc3;border-radius:7px;background:#fff;font-weight:600;color:var(--navy);}
+  #compararAviso{background:#fff6dd;border:1px solid #f0d78c;color:#6b5414;border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:12px;}
+  .fotos-dia{margin-bottom:18px;}
+  .fotos-dia-h{font-weight:700;color:var(--navy);font-size:14px;margin:0 0 8px 2px;display:flex;gap:10px;align-items:baseline;}
+  .fotos-dia-h span{font-weight:400;color:var(--muted);font-size:12px;}
+  .fotos-grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+  .foto-item{background:#fff;border-radius:9px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);cursor:pointer;border:3px solid transparent;}
+  .foto-item.sel{border-color:var(--wine);}
+  .foto-item img{width:100%;height:140px;object-fit:cover;display:block;background:#eee;}
+  .foto-leg{padding:6px 8px;font-size:12.5px;font-weight:600;color:var(--navy);}
+  .foto-leg small{display:block;font-weight:400;color:var(--muted);margin-top:2px;}
+  .evo-fotos{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+  .evo-fotos img{width:64px;height:64px;object-fit:cover;border-radius:6px;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.15);}
+  #fotoViewer{position:fixed;inset:0;background:rgba(12,16,26,.94);z-index:65;display:flex;flex-direction:column;}
+  #fotoViewer #viewerBar{display:flex;align-items:center;gap:10px;color:#fff;padding:10px 14px;}
+  #fotoViewer #viewerBar .t{flex:1;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #fotoViewer #viewerBar button{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:6px;padding:7px 12px;}
+  .fv-corpo{flex:1;display:flex;align-items:center;gap:6px;padding:0 6px 12px;min-height:0;}
+  .fv-nav{background:rgba(255,255,255,.1);border:none;color:#fff;font-size:34px;width:46px;height:70px;border-radius:8px;flex-shrink:0;}
+  .fv-nav:disabled{opacity:.25;}
+  #fvUnica{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;}
+  #fvImg{max-width:100%;max-height:calc(100% - 30px);object-fit:contain;border-radius:6px;}
+  #fvObs{color:#d6dbe4;font-size:13px;margin-top:8px;text-align:center;}
+  #fvComparar{flex:1;height:100%;display:flex;gap:10px;min-width:0;}
+  #fvComparar figure{flex:1;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;}
+  #fvComparar img{max-width:100%;max-height:calc(100% - 30px);object-fit:contain;border-radius:6px;}
+  #fvComparar figcaption{color:#fff;font-weight:600;font-size:13.5px;margin-top:8px;text-align:center;}
+  @media (max-width:700px){ #fvComparar{flex-direction:column;} .fv-nav{width:34px;font-size:26px;} }
+  .scan-linha{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+  #scanModal{position:fixed;inset:0;background:rgba(15,20,32,.6);z-index:70;display:flex;align-items:flex-start;justify-content:center;padding:24px 10px;overflow-y:auto;}
+  .scan-box{background:#fff;border-radius:12px;width:min(820px,100%);padding:18px 18px 20px;box-shadow:0 12px 40px rgba(0,0,0,.3);}
+  .scan-pac{color:var(--muted);font-size:13px;margin:2px 0 14px;}
+  .scan-botoes{display:flex;gap:10px;flex-wrap:wrap;}
+  .scan-botoes .btn{flex:1;min-width:180px;padding:14px;font-size:15px;}
+  .scan-modo{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 6px;font-size:13.5px;}
+  .scan-modo label{display:flex;align-items:center;gap:6px;cursor:pointer;}
+  #scanPaginas{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:10px;}
+  .scan-pg{border:1px solid var(--line);border-radius:8px;padding:6px;background:#f7f5f1;text-align:center;}
+  .scan-pg img{width:100%;height:170px;object-fit:contain;background:#fff;border-radius:4px;display:block;}
+  .scan-pg .n{font-size:11.5px;font-weight:700;color:var(--navy);margin:5px 0 4px;}
+  .scan-pg .b{display:flex;justify-content:center;gap:4px;}
+  .scan-pg .b button{border:1px solid #d3cdc3;background:#fff;border-radius:5px;width:32px;height:28px;font-size:13px;color:var(--navy);}
+  .scan-pg .b button:disabled{opacity:.35;}
+  #cropModal{position:fixed;inset:0;background:#111722;z-index:75;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px;touch-action:none;}
+  .crop-top{color:#dfe4ec;font-size:14px;}
+  #cropArea{position:relative;display:inline-block;max-width:94vw;max-height:74vh;line-height:0;user-select:none;-webkit-user-select:none;}
+  #cropImg{max-width:94vw;max-height:74vh;display:block;}
+  #cropRect{position:absolute;border:2px solid #f0c24b;box-shadow:0 0 0 9999px rgba(0,0,0,.55);cursor:move;touch-action:none;}
+  #cropRect .h{position:absolute;width:30px;height:30px;background:#f0c24b;border:3px solid #fff;border-radius:50%;touch-action:none;}
+  #cropRect .ce{left:-16px;top:-16px;cursor:nwse-resize;} #cropRect .cd{right:-16px;top:-16px;cursor:nesw-resize;}
+  #cropRect .be{left:-16px;bottom:-16px;cursor:nesw-resize;} #cropRect .bd{right:-16px;bottom:-16px;cursor:nwse-resize;}
+  .crop-bot{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  #cropArea{overflow:hidden;}
+  .scan-vazio{grid-column:1/-1;color:var(--muted);text-align:center;padding:26px 10px;border:2px dashed #d9d1c4;border-radius:10px;font-size:13.5px;}
   #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 18px;border-radius:8px;font-size:13.5px;box-shadow:0 4px 16px rgba(0,0,0,.25);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;}
   #toast.show{opacity:1;}
   #toast.err{background:#8b1d2c;}
@@ -263,6 +318,72 @@
   </div>
   <div id="viewerBody"></div>
 </div>
+
+<!-- ================= FOTOS CLÍNICAS ================= -->
+<div id="fotoViewer" class="hidden">
+  <div id="viewerBar">
+    <div class="t" id="fvTitulo"></div>
+    <button onclick="baixarFotoAtual()" id="fvDl">⬇ Baixar</button>
+    <button onclick="excluirFotoAtual()" id="fvDel">Excluir</button>
+    <button onclick="fecharFotoViewer()">Fechar ✕</button>
+  </div>
+  <div class="fv-corpo">
+    <button class="fv-nav" id="fvAnt" onclick="navFoto(-1)">‹</button>
+    <div id="fvUnica"><img id="fvImg" alt=""><div id="fvObs"></div></div>
+    <div id="fvComparar" class="hidden">
+      <figure><img id="fvA" alt=""><figcaption id="fvLegA"></figcaption></figure>
+      <figure><img id="fvB" alt=""><figcaption id="fvLegB"></figcaption></figure>
+    </div>
+    <button class="fv-nav" id="fvProx" onclick="navFoto(1)">›</button>
+  </div>
+</div>
+<input type="file" id="fotoCam" accept="image/*" capture="environment" class="hidden">
+<input type="file" id="fotoGal" accept="image/*" multiple class="hidden">
+
+<!-- ================= ESCÂNER DE EXAMES ================= -->
+<div id="scanModal" class="hidden">
+  <div class="scan-box">
+    <div class="loc-top"><h3>Escanear exame</h3><button class="loc-x" onclick="fecharScanner()">✕</button></div>
+    <div class="scan-pac" id="scanPac"></div>
+    <div class="scan-botoes">
+      <button class="btn pri" onclick="$('scanCam').click()">📷 Fotografar página</button>
+      <button class="btn sec" onclick="$('scanGal').click()">🖼 Escolher fotos</button>
+    </div>
+    <div class="scan-modo">
+      <label><input type="radio" name="scanModo" value="doc" checked onchange="renderPaginasScan()"> Documento (preto e branco realçado)</label>
+      <label><input type="radio" name="scanModo" value="cor" onchange="renderPaginasScan()"> Colorido</label>
+    </div>
+    <div id="scanPaginas"></div>
+    <div class="grid" style="grid-template-columns:150px 1fr;margin-top:14px">
+      <div class="f"><label for="scanData">Data do exame</label><input id="scanData" type="date"></div>
+      <div class="f"><label for="scanDesc">Descrição</label><input id="scanDesc" placeholder="Ex.: Doppler venoso MMII, laboratório…"></div>
+    </div>
+    <div class="actions" style="margin-top:14px">
+      <button class="btn sec" onclick="fecharScanner()">Cancelar</button>
+      <span class="spacer"></span>
+      <button class="btn pri" id="scanSalvarBtn" onclick="salvarScan()">Salvar no prontuário</button>
+    </div>
+  </div>
+</div>
+<div id="cropModal" class="hidden">
+  <div class="crop-top">Arraste os cantos até as bordas da folha</div>
+  <div id="cropArea">
+    <img id="cropImg" alt="">
+    <div id="cropRect" onpointerdown="iniciarArrasto(event,'mover')">
+      <span class="h ce" onpointerdown="iniciarArrasto(event,'ce')"></span>
+      <span class="h cd" onpointerdown="iniciarArrasto(event,'cd')"></span>
+      <span class="h be" onpointerdown="iniciarArrasto(event,'be')"></span>
+      <span class="h bd" onpointerdown="iniciarArrasto(event,'bd')"></span>
+    </div>
+  </div>
+  <div class="crop-bot">
+    <button class="btn sec" onclick="$('cropModal').classList.add('hidden')">Cancelar</button>
+    <button class="btn sec" onclick="aplicarRecorte(true)">Página inteira</button>
+    <button class="btn pri" onclick="aplicarRecorte(false)">Aplicar recorte</button>
+  </div>
+</div>
+<input type="file" id="scanCam" accept="image/*" capture="environment" class="hidden">
+<input type="file" id="scanGal" accept="image/*" multiple class="hidden">
 
 <!-- ================= LOCAIS DE ATENDIMENTO ================= -->
 <div id="locaisModal" class="hidden">
@@ -419,8 +540,8 @@ const PAC = db.collection('pacientes');
 let PACIENTES = [];
 let pacAtual = null;           // objeto do paciente selecionado
 let abaAtual = 'evolucao';
-let unsubPac = null, unsubEvo = null, unsubEx = null, unsubDoc = null;
-let EVOLUCOES = [], EXAMES = [], DOCUMENTOS = [];
+let unsubPac = null, unsubEvo = null, unsubEx = null, unsubDoc = null, unsubFotos = null;
+let EVOLUCOES = [], EXAMES = [], DOCUMENTOS = [], FOTOS = [];
 let evoEditando = null;
 let MODELOS_EVO = [], unsubModelos = null;
 
@@ -497,7 +618,7 @@ function sair(){ if(auth) auth.signOut(); }
 function pararTudo(){
   [unsubPac,unsubEvo,unsubEx,unsubDoc,unsubModelos,unsubLocais].forEach(u=>u&&u());
   unsubPac=unsubEvo=unsubEx=unsubDoc=null;
-  PACIENTES=[]; pacAtual=null; EVOLUCOES=[]; EXAMES=[]; DOCUMENTOS=[];
+  PACIENTES=[]; pacAtual=null; EVOLUCOES=[]; EXAMES=[]; DOCUMENTOS=[]; FOTOS=[];
   $('listaPac').innerHTML=''; $('main').innerHTML='';
   $('toolFrames').innerHTML=''; for(const k in FERR) delete FERR[k];
 }
@@ -701,10 +822,18 @@ function selecionarPaciente(id){
     DOCUMENTOS = s.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.completo);
     atualizarContagens(); if(abaAtual==='documentos'||abaAtual==='orcamentos') renderListaDocs();
   }, erroFirebase);
+  FOTOS=[];
+  unsubFotos = PAC.doc(id).collection('fotos').orderBy('ts','desc').onSnapshot(s=>{
+    FOTOS = s.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.completo)
+      .sort((a,b)=>(b.dataFoto||'').localeCompare(a.dataFoto||'') || (b.ts||0)-(a.ts||0));
+    atualizarContagens();
+    if(abaAtual==='fotos') renderListaFotos();
+    if(abaAtual==='evolucao') renderListaEvo();
+  }, erroFirebase);
 }
 function pararListenersPaciente(){
-  [unsubEvo,unsubEx,unsubDoc].forEach(u=>u&&u());
-  unsubEvo=unsubEx=unsubDoc=null;
+  [unsubEvo,unsubEx,unsubDoc,unsubFotos].forEach(u=>u&&u());
+  unsubEvo=unsubEx=unsubDoc=unsubFotos=null;
 }
 
 function renderPaciente(){
@@ -714,6 +843,7 @@ function renderPaciente(){
       <button data-a="evolucao" onclick="trocarAba('evolucao')">Evolução<span class="cnt" id="cntEvo">0</span></button>
       <button data-a="exames" onclick="trocarAba('exames')">Exames<span class="cnt" id="cntEx">0</span></button>
       <button data-a="documentos" onclick="trocarAba('documentos')">Receitas e guias<span class="cnt" id="cntDoc">0</span></button>
+      <button data-a="fotos" onclick="trocarAba('fotos')">Fotos<span class="cnt" id="cntFotos">0</span></button>
       <button data-a="orcamentos" onclick="trocarAba('orcamentos')">Orçamentos<span class="cnt" id="cntOrc">0</span></button>
       <button data-a="dados" onclick="trocarAba('dados')">Dados do paciente</button>
     </div>
@@ -752,6 +882,7 @@ function atualizarContagens(){
   if($('cntEx')) $('cntEx').textContent=EXAMES.length;
   if($('cntDoc')) $('cntDoc').textContent=DOCUMENTOS.filter(d=>d.ferramenta!=='orcamento').length;
   if($('cntOrc')) $('cntOrc').textContent=DOCUMENTOS.filter(d=>d.ferramenta==='orcamento').length;
+  if($('cntFotos')) $('cntFotos').textContent=FOTOS.length;
 }
 
 function trocarAba(a){
@@ -760,6 +891,7 @@ function trocarAba(a){
   if(a==='evolucao') renderAbaEvolucao();
   else if(a==='exames') renderAbaExames();
   else if(a==='documentos' || a==='orcamentos') renderAbaDocs();
+  else if(a==='fotos') renderAbaFotos();
   else renderFormDados(pacAtual);
   atualizarContagens();
 }
@@ -897,7 +1029,7 @@ async function excluirPaciente(){
     pararListenersPaciente();
     const ref = PAC.doc(p.id);
     await apagarColecao(ref.collection('evolucoes'));
-    for(const c of ['exames','documentos']){
+    for(const c of ['exames','documentos','fotos']){
       const exs = await ref.collection(c).get();
       for(const e of exs.docs){ await apagarColecao(e.ref.collection('partes')); await e.ref.delete(); }
     }
@@ -948,6 +1080,7 @@ function renderListaEvo(){
         <span class="spacer"></span>
         <a onclick="copiarEvolucao('${e.id}')" title="Copia o texto para uma nova evolução de hoje">copiar</a><a onclick="copiarParaHospital(EVOLUCOES.find(x=>x.id==='${e.id}').texto)" title="Copia com o cabeçalho de antecedentes, para colar no sistema do hospital">📋 hospital</a><a onclick="editarEvolucao('${e.id}')">editar</a><a onclick="excluirEvolucao('${e.id}')">excluir</a></div>
       <div class="x">${esc(e.texto)}</div>
+      ${(()=>{ const fs=FOTOS.filter(f=>f.dataFoto===e.data); return fs.length ? `<div class="evo-fotos">${fs.map(f=>`<img src="${f.miniatura}" title="${esc(f.regiao||'')}" onclick="abrirFoto('${f.id}', FOTOS.filter(x=>x.dataFoto==='${e.data}').map(x=>x.id))">`).join('')}</div>` : ''; })()}
     </div>`).join('');
 }
 
@@ -1084,6 +1217,10 @@ function renderAbaExames(){
         <div class="f"><label for="exData">Data do exame</label><input id="exData" type="date" value="${hojeISO()}"></div>
         <div class="f"><label for="exDesc">Descrição (opcional)</label><input id="exDesc" placeholder="Ex.: Doppler venoso MMII, laboratório, angiotomografia…"></div>
       </div>
+      <div class="scan-linha">
+        <button class="btn pri" onclick="abrirScanner()">📷 Escanear exame</button>
+        <span style="color:var(--muted);font-size:12.5px">Fotografe as páginas com o celular/iPad — vira um PDF e fica salvo aqui.</span>
+      </div>
       <div id="dropZone">Arraste os PDFs aqui ou <b>clique para escolher</b><br><small>PDF ou imagem · até 25 MB cada</small></div>
       <div id="upStatus"></div>
     </div>
@@ -1144,8 +1281,354 @@ async function salvarArquivo(pid, colecao, blob, meta, progresso){
   return ref.id;
 }
 
+/* ======================================================================
+   ESCÂNER: fotos das páginas -> realce de documento -> PDF -> aba Exames
+   ====================================================================== */
+let scanPaginas = [];   // [{img, rot}]
+function abrirScanner(){
+  if(!pacAtual) return;
+  scanPaginas=[];
+  $('scanPac').textContent='Paciente: '+pacAtual.nome;
+  $('scanData').value = ($('exData') && $('exData').value) || hojeISO();
+  $('scanDesc').value = ($('exDesc') && $('exDesc').value) || '';
+  renderPaginasScan();
+  $('scanModal').classList.remove('hidden');
+}
+function fecharScanner(){
+  if(scanPaginas.length && !confirm('Descartar as páginas fotografadas?')) return;
+  scanPaginas=[]; $('scanModal').classList.add('hidden'); $('scanPaginas').innerHTML='';
+}
+function modoScan(){ const r=document.querySelector('input[name=scanModo]:checked'); return r ? r.value : 'doc'; }
+
+async function carregarImagem(file){
+  const url=URL.createObjectURL(file);
+  const img=new Image(); img.src=url;
+  try{ await img.decode(); } finally { setTimeout(()=>URL.revokeObjectURL(url), 2000); }
+  return img;
+}
+async function adicionarFotosScan(files){
+  for(const f of [...files]){
+    if(!f.type.startsWith('image/')) continue;
+    try{ scanPaginas.push({ img: await carregarImagem(f), rot:0 }); }
+    catch(e){ toast(`Não consegui abrir "${f.name}".`, true); }
+  }
+  renderPaginasScan();
+}
+$('scanCam').addEventListener('change', e=>{ adicionarFotosScan(e.target.files); e.target.value=''; });
+$('scanGal').addEventListener('change', e=>{ adicionarFotosScan(e.target.files); e.target.value=''; });
+
+// desenha a página girada, reduzida e (no modo documento) em P&B com níveis automáticos
+function processarPagina(pg, modo, maxLado){
+  const img=pg.img; let w=img.naturalWidth, h=img.naturalHeight;
+  const s=Math.min(1, maxLado/Math.max(w,h)); w=Math.round(w*s); h=Math.round(h*s);
+  const r=((pg.rot%360)+360)%360, deitado=(r===90||r===270);
+  const c=document.createElement('canvas'); c.width=deitado?h:w; c.height=deitado?w:h;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,c.width,c.height);
+  ctx.translate(c.width/2,c.height/2); ctx.rotate(r*Math.PI/180); ctx.drawImage(img,-w/2,-h/2,w,h);
+  if(pg.crop){
+    // recorte (proporções 0–1 sobre a imagem já girada)
+    const k=pg.crop, cx=Math.round(k.x*c.width), cy=Math.round(k.y*c.height);
+    const cw=Math.max(10,Math.round(k.w*c.width)), ch=Math.max(10,Math.round(k.h*c.height));
+    const c2=document.createElement('canvas'); c2.width=cw; c2.height=ch;
+    c2.getContext('2d').drawImage(c,cx,cy,cw,ch,0,0,cw,ch);
+    return modo==='doc' ? realcarDocumento(c2) : c2;
+  }
+  return modo==='doc' ? realcarDocumento(c) : c;
+}
+function realcarDocumento(c){
+  const ctx=c.getContext('2d');
+  {
+    const d=ctx.getImageData(0,0,c.width,c.height), a=d.data, hist=new Uint32Array(256), n=a.length/4;
+    for(let i=0;i<a.length;i+=4){ const g=(a[i]*0.299+a[i+1]*0.587+a[i+2]*0.114)|0; a[i]=g; hist[g]++; }
+    let acc=0, lo=0, hi=255;
+    for(let v=0;v<256;v++){ acc+=hist[v]; if(acc>=n*0.02){ lo=v; break; } }
+    acc=0; for(let v=0;v<256;v++){ acc+=hist[v]; if(acc>=n*0.80){ hi=v; break; } }   // papel = maioria clara
+    if(hi-lo<40){ lo=Math.max(0,hi-40); }
+    const f=255/(hi-lo);
+    for(let i=0;i<a.length;i+=4){
+      let v=(a[i]-lo)*f; v = v<0?0 : v>255?255 : v;
+      v = 255*Math.pow(v/255, 1.25);          // escurece um pouco o texto
+      a[i]=a[i+1]=a[i+2]=v;
+    }
+    ctx.putImageData(d,0,0);
+  }
+  return c;
+}
+
+function renderPaginasScan(){
+  const el=$('scanPaginas'); if(!el) return;
+  const modo=modoScan();
+  if(!scanPaginas.length){
+    el.innerHTML='<div class="scan-vazio">Nenhuma página ainda.<br>Toque em <b>Fotografar página</b> para cada folha do exame — com boa luz, a folha inteira no quadro.</div>';
+    $('scanSalvarBtn').textContent='Salvar no prontuário'; $('scanSalvarBtn').disabled=true; return;
+  }
+  el.innerHTML = scanPaginas.map((pg,i)=>`
+    <div class="scan-pg">
+      <img src="${processarPagina(pg, modo, 360).toDataURL('image/jpeg',0.8)}" alt="página ${i+1}">
+      <div class="n">Página ${i+1}</div>
+      <div class="b">
+        <button title="Mover para a esquerda" onclick="moverPaginaScan(${i},-1)" ${i===0?'disabled':''}>◀</button>
+        <button title="Girar" onclick="girarPaginaScan(${i})">↻</button>
+        <button title="Recortar" onclick="abrirRecorte(${i})">✂</button>
+        <button title="Mover para a direita" onclick="moverPaginaScan(${i},1)" ${i===scanPaginas.length-1?'disabled':''}>▶</button>
+        <button title="Remover página" onclick="removerPaginaScan(${i})" style="color:#a12a2a">✕</button>
+      </div>
+    </div>`).join('');
+  $('scanSalvarBtn').disabled=false;
+  $('scanSalvarBtn').textContent=`Salvar no prontuário (${scanPaginas.length} página${scanPaginas.length>1?'s':''})`;
+}
+function girarPaginaScan(i){
+  const pg=scanPaginas[i]; pg.rot=(pg.rot+90)%360;
+  if(pg.crop){ const k=pg.crop; pg.crop={ x:1-k.y-k.h, y:k.x, w:k.h, h:k.w }; }   // recorte acompanha o giro
+  renderPaginasScan();
+}
+
+/* ---------- recorte com o dedo/mouse ---------- */
+let recorteIdx=-1, recorte=null, arrasto=null;
+function abrirRecorte(i){
+  recorteIdx=i; const pg=scanPaginas[i];
+  const semCorte={...pg, crop:null};
+  const c=processarPagina(semCorte, 'cor', 1400);
+  const img=$('cropImg'); img.src=c.toDataURL('image/jpeg',0.85);
+  recorte = pg.crop ? {...pg.crop} : {x:0.04,y:0.04,w:0.92,h:0.92};
+  $('cropModal').classList.remove('hidden');
+  img.onload=desenharRecorte;
+}
+function desenharRecorte(){
+  const k=recorte, r=$('cropRect');
+  r.style.left=(k.x*100)+'%'; r.style.top=(k.y*100)+'%'; r.style.width=(k.w*100)+'%'; r.style.height=(k.h*100)+'%';
+}
+function iniciarArrasto(e, tipo){
+  e.preventDefault(); e.stopPropagation();
+  const box=$('cropArea').getBoundingClientRect();
+  arrasto={tipo, box, x0:e.clientX, y0:e.clientY, k0:{...recorte}};
+  window.addEventListener('pointermove', moverArrasto);
+  window.addEventListener('pointerup', fimArrasto, {once:true});
+}
+function moverArrasto(e){
+  if(!arrasto) return;
+  const {tipo,box,x0,y0,k0}=arrasto, dx=(e.clientX-x0)/box.width, dy=(e.clientY-y0)/box.height, MIN=0.08;
+  let {x,y,w,h}=k0;
+  if(tipo==='mover'){ x=Math.min(Math.max(0,x+dx),1-w); y=Math.min(Math.max(0,y+dy),1-h); }
+  else{
+    let x2=x+w, y2=y+h;
+    if(tipo.includes('e')) x=Math.min(Math.max(0,x+dx), x2-MIN);
+    if(tipo.includes('d')) x2=Math.max(Math.min(1,x2+dx), x+MIN);
+    if(tipo.includes('c')) y=Math.min(Math.max(0,y+dy), y2-MIN);
+    if(tipo.includes('b')) y2=Math.max(Math.min(1,y2+dy), y+MIN);
+    w=x2-x; h=y2-y;
+  }
+  recorte={x,y,w,h}; desenharRecorte();
+}
+function fimArrasto(){ arrasto=null; window.removeEventListener('pointermove', moverArrasto); }
+function aplicarRecorte(inteira){
+  const pg=scanPaginas[recorteIdx];
+  if(pg) pg.crop = inteira ? null : {...recorte};
+  $('cropModal').classList.add('hidden'); renderPaginasScan();
+}
+function moverPaginaScan(i,d){ const j=i+d; if(j<0||j>=scanPaginas.length) return; [scanPaginas[i],scanPaginas[j]]=[scanPaginas[j],scanPaginas[i]]; renderPaginasScan(); }
+function removerPaginaScan(i){ scanPaginas.splice(i,1); renderPaginasScan(); }
+
+function canvasParaJpeg(c, q){
+  return new Promise(res=>c.toBlob(async b=>res(new Uint8Array(await b.arrayBuffer())), 'image/jpeg', q));
+}
+// PDF simples: uma imagem JPEG por página A4 (retrato ou paisagem), centralizada
+function montarPdf(paginas){
+  const enc=new TextEncoder(), partes=[], offs=[]; let pos=0;
+  const add=x=>{ const b=(typeof x==='string')?enc.encode(x):x; partes.push(b); pos+=b.length; };
+  const obj=(id,corpo)=>{ offs[id]=pos; add(`${id} 0 obj\n`); corpo(); add('\nendobj\n'); };
+  add('%PDF-1.4\n'); add(new Uint8Array([37,226,227,207,211,10]));
+  const n=paginas.length;
+  obj(1,()=>add('<< /Type /Catalog /Pages 2 0 R >>'));
+  obj(2,()=>add(`<< /Type /Pages /Kids [${paginas.map((_,i)=>`${3+3*i} 0 R`).join(' ')}] /Count ${n} >>`));
+  paginas.forEach((p,i)=>{
+    const pais=p.w>p.h, W=pais?841.89:595.28, H=pais?595.28:841.89, m=14;
+    const s=Math.min((W-2*m)/p.w,(H-2*m)/p.h), dw=p.w*s, dh=p.h*s, x=(W-dw)/2, y=(H-dh)/2;
+    obj(3+3*i,()=>add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /XObject << /Im${i} ${5+3*i} 0 R >> >> /Contents ${4+3*i} 0 R >>`));
+    const cs=`q ${dw.toFixed(2)} 0 0 ${dh.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm /Im${i} Do Q`;
+    obj(4+3*i,()=>add(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`));
+    obj(5+3*i,()=>{ add(`<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.bytes.length} >>\nstream\n`); add(p.bytes); add('\nendstream'); });
+  });
+  const xref=pos, total=3+3*n;
+  add(`xref\n0 ${total}\n0000000000 65535 f \n`);
+  for(let i=1;i<total;i++) add(String(offs[i]).padStart(10,'0')+' 00000 n \n');
+  add(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob(partes,{type:'application/pdf'});
+}
+
+async function salvarScan(){
+  if(!scanPaginas.length || !pacAtual) return;
+  const btn=$('scanSalvarBtn'); btn.disabled=true; btn.textContent='Gerando PDF…';
+  try{
+    const modo=modoScan(), pags=[];
+    for(const pg of scanPaginas){
+      const c=processarPagina(pg, modo, 2000);
+      pags.push({ w:c.width, h:c.height, bytes: await canvasParaJpeg(c, modo==='doc'?0.75:0.82) });
+    }
+    const pdf=montarPdf(pags);
+    if(pdf.size>TAMANHO_MAX_ARQUIVO){ toast('O PDF ficou maior que 25 MB — tente com menos páginas.', true); return; }
+    const data=$('scanData').value||hojeISO(), desc=$('scanDesc').value.trim();
+    const nome=`Exame escaneado - ${pacAtual.nome} - ${fmtBR(data).replace(/\//g,'-')}.pdf`;
+    btn.textContent='Enviando…';
+    await salvarArquivo(pacAtual.id, 'exames', pdf, { nome, dataExame:data, descricao: desc || 'Exame escaneado' },
+      pct=>{ btn.textContent=`Enviando… ${pct}%`; });
+    scanPaginas=[]; $('scanModal').classList.add('hidden'); $('scanPaginas').innerHTML='';
+    toast(`Exame salvo (${pags.length} página${pags.length>1?'s':''}, ${fmtTam(pdf.size)}).`);
+  }catch(e){ erroFirebase(e); }
+  finally{ btn.disabled=false; renderPaginasScan(); }
+}
+
+/* ======================================================================
+   FOTOS CLÍNICAS: acompanhamento de feridas / tratamento por data e região
+   ====================================================================== */
+let fotoFiltroRegiao='', compararModo=false, compararSel=[];
+function regioesUsadas(){
+  const todas=[]; FOTOS.forEach(f=>{ if(f.regiao && !todas.some(r=>norm(r)===norm(f.regiao))) todas.push(f.regiao); });
+  return todas.sort((a,b)=>a.localeCompare(b,'pt-BR'));
+}
+function renderAbaFotos(){
+  compararModo=false; compararSel=[];
+  $('abaConteudo').innerHTML = `
+    <div class="card">
+      <div class="scan-botoes">
+        <button class="btn pri" onclick="$('fotoCam').click()">📷 Tirar foto</button>
+        <button class="btn sec" onclick="$('fotoGal').click()">🖼 Escolher fotos</button>
+      </div>
+      <div class="grid" style="grid-template-columns:150px 1fr 1.2fr;margin-top:12px">
+        <div class="f"><label for="fotoData">Data</label><input id="fotoData" type="date" value="${hojeISO()}"></div>
+        <div class="f"><label for="fotoRegiao">Região</label><input id="fotoRegiao" list="fotoRegioesDL" placeholder="Ex.: MIE – maléolo medial"></div>
+        <div class="f"><label for="fotoObs">Observação (opcional)</label><input id="fotoObs" placeholder="Ex.: após 2 semanas de bota de Unna"></div>
+      </div>
+      <datalist id="fotoRegioesDL">${regioesUsadas().map(r=>`<option value="${esc(r)}">`).join('')}</datalist>
+      <div id="fotoStatus"></div>
+    </div>
+    <div class="fotos-bar">
+      <select id="fotoFiltro" onchange="fotoFiltroRegiao=this.value; renderListaFotos()"></select>
+      <span class="spacer"></span>
+      <button class="btn sec mini" id="compararBtn" onclick="alternarComparar()">⇆ Comparar 2 fotos</button>
+    </div>
+    <div id="compararAviso" class="hidden">Toque em 2 fotos para ver lado a lado.</div>
+    <div id="listaFotos"></div>`;
+  renderListaFotos();
+}
+function fotosFiltradas(){ return FOTOS.filter(f=>!fotoFiltroRegiao || norm(f.regiao)===norm(fotoFiltroRegiao)); }
+function renderListaFotos(){
+  const el=$('listaFotos'); if(!el) return;
+  const regs=regioesUsadas(), sel=$('fotoFiltro');
+  if(fotoFiltroRegiao && !regs.some(r=>norm(r)===norm(fotoFiltroRegiao))) fotoFiltroRegiao='';
+  sel.innerHTML=['<option value="">Todas as regiões</option>'].concat(regs.map(r=>`<option ${norm(r)===norm(fotoFiltroRegiao)?'selected':''}>${esc(r)}</option>`)).join('');
+  if($('fotoRegioesDL')) $('fotoRegioesDL').innerHTML=regs.map(r=>`<option value="${esc(r)}">`).join('');
+  const lista=fotosFiltradas();
+  if(!lista.length){ el.innerHTML='<div class="card" style="color:var(--muted)">Nenhuma foto ainda.</div>'; return; }
+  const porData={}; lista.forEach(f=>{ (porData[f.dataFoto]=porData[f.dataFoto]||[]).push(f); });
+  el.innerHTML = Object.keys(porData).sort().reverse().map(d=>`
+    <div class="fotos-dia">
+      <div class="fotos-dia-h">${esc(fmtBR(d))}<span>${porData[d].length} foto${porData[d].length>1?'s':''}</span></div>
+      <div class="fotos-grade">
+        ${porData[d].map(f=>`
+          <div class="foto-item ${compararSel.includes(f.id)?'sel':''}" onclick="cliqueFoto('${f.id}')">
+            <img src="${f.miniatura}" alt="">
+            <div class="foto-leg">${esc(f.regiao||'—')}${f.obs?`<small>${esc(f.obs)}</small>`:''}</div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function alternarComparar(){
+  compararModo=!compararModo; compararSel=[];
+  $('compararBtn').textContent = compararModo ? 'Cancelar comparação' : '⇆ Comparar 2 fotos';
+  $('compararAviso').classList.toggle('hidden', !compararModo);
+  renderListaFotos();
+}
+function cliqueFoto(id){
+  if(!compararModo){ abrirFoto(id, fotosFiltradas().map(f=>f.id)); return; }
+  compararSel = compararSel.includes(id) ? compararSel.filter(x=>x!==id) : compararSel.concat(id).slice(-2);
+  renderListaFotos();
+  if(compararSel.length===2){ const par=[...compararSel]; alternarComparar(); abrirComparacao(par); }
+}
+
+// reduz a foto (lado maior 1800 px) e gera uma miniatura que fica no próprio registro
+async function prepararFoto(file){
+  const img=await carregarImagem(file);
+  const desenhar=(max,q)=>{
+    let w=img.naturalWidth, h=img.naturalHeight; const s=Math.min(1,max/Math.max(w,h)); w=Math.round(w*s); h=Math.round(h*s);
+    const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
+    return c;
+  };
+  const grande=desenhar(1800), mini=desenhar(320);
+  const blob=await new Promise(r=>grande.toBlob(r,'image/jpeg',0.84));
+  return { blob, miniatura: mini.toDataURL('image/jpeg',0.7) };
+}
+async function enviarFotos(files){
+  files=[...files].filter(f=>f.type.startsWith('image/')); if(!files.length || !pacAtual) return;
+  const data=$('fotoData').value||hojeISO(), regiao=$('fotoRegiao').value.trim(), obs=$('fotoObs').value.trim();
+  for(const [i,f] of files.entries()){
+    $('fotoStatus').innerHTML=`<div style="margin-top:10px;font-size:13px">Enviando foto ${i+1} de ${files.length}…</div><div class="progress"><div id="upBar"></div></div>`;
+    try{
+      const {blob, miniatura}=await prepararFoto(f);
+      await salvarArquivo(pacAtual.id,'fotos',blob,{
+        nome:`Foto - ${pacAtual.nome} - ${fmtBR(data).replace(/\//g,'-')}${regiao?' - '+regiao:''}.jpg`,
+        dataFoto:data, regiao, obs, miniatura
+      }, pct=>{ if($('upBar')) $('upBar').style.width=pct+'%'; });
+    }catch(e){ erroFirebase(e); }
+  }
+  if($('fotoStatus')) $('fotoStatus').innerHTML='';
+  toast(files.length>1?`${files.length} fotos salvas.`:'Foto salva.');
+}
+$('fotoCam').addEventListener('change', e=>{ enviarFotos(e.target.files); e.target.value=''; });
+$('fotoGal').addEventListener('change', e=>{ enviarFotos(e.target.files); e.target.value=''; });
+
+/* ---------- visualizador de fotos ---------- */
+let fotoSeq=[], fotoPos=0;
+async function abrirFoto(id, seq){
+  fotoSeq=seq&&seq.length?seq:[id]; fotoPos=Math.max(0,fotoSeq.indexOf(id));
+  $('fotoViewer').classList.remove('hidden'); $('fvComparar').classList.add('hidden'); $('fvUnica').classList.remove('hidden');
+  $('fvDl').classList.remove('hidden'); $('fvDel').classList.remove('hidden');
+  mostrarFotoAtual();
+}
+async function mostrarFotoAtual(){
+  const f=FOTOS.find(x=>x.id===fotoSeq[fotoPos]); if(!f){ fecharFotoViewer(); return; }
+  $('fvTitulo').textContent=`${fmtBR(f.dataFoto)} · ${f.regiao||'sem região'}${fotoSeq.length>1?`  (${fotoPos+1}/${fotoSeq.length})`:''}`;
+  $('fvObs').textContent=f.obs||'';
+  $('fvImg').src=f.miniatura;   // aparece na hora; troca pela foto completa
+  $('fvAnt').disabled=fotoPos===0; $('fvProx').disabled=fotoPos>=fotoSeq.length-1;
+  $('fvAnt').style.visibility=$('fvProx').style.visibility=fotoSeq.length>1?'visible':'hidden';
+  try{ const a=await obterBlob('fotos', f.id); if(FOTOS.find(x=>x.id===fotoSeq[fotoPos])===f) $('fvImg').src=a.url; }catch(e){ erroFirebase(e); }
+}
+function navFoto(d){ const n=fotoPos+d; if(n<0||n>=fotoSeq.length) return; fotoPos=n; mostrarFotoAtual(); }
+function fecharFotoViewer(){ $('fotoViewer').classList.add('hidden'); $('fvImg').src=''; $('fvA').src=''; $('fvB').src=''; }
+async function excluirFotoAtual(){
+  const id=fotoSeq[fotoPos], f=FOTOS.find(x=>x.id===id); if(!f) return;
+  if(!confirm(`Excluir esta foto de ${fmtBR(f.dataFoto)}?`)) return;
+  try{
+    const ref=PAC.doc(pacAtual.id).collection('fotos').doc(id);
+    await ref.update({completo:false}); await apagarColecao(ref.collection('partes')); await ref.delete();
+    delete cacheArquivo[id]; fotoSeq=fotoSeq.filter(x=>x!==id);
+    toast('Foto excluída.');
+    if(!fotoSeq.length) fecharFotoViewer(); else { fotoPos=Math.min(fotoPos,fotoSeq.length-1); mostrarFotoAtual(); }
+  }catch(e){ erroFirebase(e); }
+}
+async function baixarFotoAtual(){ const id=fotoSeq[fotoPos]; if(id) baixarArquivo('fotos', id); }
+async function abrirComparacao(ids){
+  const fs=ids.map(id=>FOTOS.find(x=>x.id===id)).filter(Boolean).sort((a,b)=>(a.dataFoto||'').localeCompare(b.dataFoto||''));
+  if(fs.length<2) return;
+  $('fotoViewer').classList.remove('hidden'); $('fvUnica').classList.add('hidden'); $('fvComparar').classList.remove('hidden');
+  $('fvDl').classList.add('hidden'); $('fvDel').classList.add('hidden');
+  $('fvTitulo').textContent='Comparação'; $('fvObs').textContent='';
+  $('fvAnt').style.visibility=$('fvProx').style.visibility='hidden';
+  const dias=Math.round((new Date(fs[1].dataFoto)-new Date(fs[0].dataFoto))/86400000);
+  $('fvLegA').textContent=`${fmtBR(fs[0].dataFoto)} · ${fs[0].regiao||''}`;
+  $('fvLegB').textContent=`${fmtBR(fs[1].dataFoto)} · ${fs[1].regiao||''}${dias>0?`  (+${dias} dias)`:''}`;
+  $('fvA').src=fs[0].miniatura; $('fvB').src=fs[1].miniatura;
+  try{ $('fvA').src=(await obterBlob('fotos',fs[0].id)).url; $('fvB').src=(await obterBlob('fotos',fs[1].id)).url; }catch(e){ erroFirebase(e); }
+}
+document.addEventListener('keydown', e=>{
+  if($('fotoViewer').classList.contains('hidden')) return;
+  if(e.key==='ArrowLeft') navFoto(-1); else if(e.key==='ArrowRight') navFoto(1); else if(e.key==='Escape') fecharFotoViewer();
+});
+
 const cacheArquivo = {};
-function listaDe(colecao){ return colecao==='documentos' ? DOCUMENTOS : EXAMES; }
+function listaDe(colecao){ return colecao==='documentos' ? DOCUMENTOS : colecao==='fotos' ? FOTOS : EXAMES; }
 async function obterBlob(colecao, id){
   if(cacheArquivo[id]) return cacheArquivo[id];
   const x=listaDe(colecao).find(e=>e.id===id); if(!x) throw new Error('arquivo não encontrado');
