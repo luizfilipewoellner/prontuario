@@ -930,6 +930,7 @@ function renderAbaEvolucao(){
         <textarea id="evoTexto" style="min-height:170px" placeholder="Queixa, história, exame físico, conduta…">${esc(e.texto||'')}</textarea></div>
       <div class="actions">
         <button class="btn pri" id="evoSalvarBtn" onclick="salvarEvolucao()">${evoEditando?'Atualizar':'Salvar evolução'}</button>
+        <button class="btn sec" onclick="limparEvolucao()" title="Apaga o que está digitado (não mexe nas evoluções já salvas)">Limpar</button>
         <button class="btn sec" onclick="copiarParaHospital($('evoTexto').value)" title="Copia o cabeçalho com os antecedentes + o texto digitado, para colar no sistema do hospital">📋 Copiar para o hospital</button>
         ${evoEditando?'<button class="btn sec" onclick="cancelarEdicaoEvo()">Cancelar</button>':''}
       </div>
@@ -1057,6 +1058,13 @@ async function excluirModeloEvo(){
   catch(e){ erroFirebase(e); }
 }
 
+function limparEvolucao(){
+  const ta=$('evoTexto');
+  if(ta && ta.value.trim() && !confirm('Apagar o texto que está sendo digitado?')) return;
+  evoEditando=null;
+  renderAbaEvolucao();
+  $('evoTexto').focus();
+}
 function cancelarEdicaoEvo(){ evoEditando=null; renderAbaEvolucao(); }
 async function excluirEvolucao(id){
   const e=EVOLUCOES.find(x=>x.id===id); if(!e) return;
@@ -1475,6 +1483,63 @@ function preencher(k, iframe, dados){
     const el=doc.getElementById(id);
     if(el){ el.value=dados[campo]; disparar(el); }
   }
+  instalarDataSolicitacao(k, doc);
+  manterDadosAoLimpar(k, doc);
+}
+
+// id do campo "Data da Solicitação" em cada guia
+const CAMPO_DATA = { sadt:'f22', internacao:'f46', opme:'f26' };
+
+// data começa em branco; botões 📅 (abre o calendário) e "Hoje"
+function instalarDataSolicitacao(k, doc){
+  const el=doc.getElementById(CAMPO_DATA[k]); if(!el || el.dataset.prontuario) return;
+  el.dataset.prontuario='1';
+  const box=doc.createElement('div');
+  box.style.cssText='display:flex;gap:6px;align-items:center';
+  el.parentNode.insertBefore(box, el); box.appendChild(el);
+  el.style.flex='1';
+  const mk=(txt,title,fn)=>{ const b=doc.createElement('button'); b.type='button'; b.textContent=txt; b.title=title;
+    b.style.cssText='flex:0 0 auto;padding:7px 11px;border:1px solid #dcd7cf;border-radius:6px;background:#f3e7ea;color:#1b2942;font-weight:600;font-size:13px;cursor:pointer;font-family:inherit';
+    b.addEventListener('click',fn); box.appendChild(b); };
+  mk('📅','Escolher a data no calendário',()=>{ try{ el.showPicker(); }catch(e){ el.focus(); el.click(); } });
+  mk('Hoje','Usar a data de hoje',()=>{ el.value=hojeISO(); el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true})); });
+}
+
+// "Limpar tudo" / "Limpar": guarda paciente, convênio e data antes e devolve depois
+const MANTER_AO_LIMPAR = {
+  sadt:       ['convenio','f8','f10','f22'],
+  internacao: ['convenio','f7','f10','f46'],
+  opme:       ['convenio','f7','f8','f26'],
+  receita:    ['paciente'],
+  orcamento:  []
+};
+function manterDadosAoLimpar(k, doc){
+  const btn=doc.getElementById('clearBtn'); if(!btn || btn.dataset.prontuario) return;
+  btn.dataset.prontuario='1';
+  let guardado=null;
+  btn.addEventListener('click', ()=>{           // antes do app limpar
+    guardado={ campos:{}, locais:null };
+    for(const id of MANTER_AO_LIMPAR[k]||[]){ const el=doc.getElementById(id); if(el) guardado.campos[id]=el.value; }
+    if(k==='receita') guardado.locais=[...doc.querySelectorAll('.local-check')].map(c=>c.checked);
+  }, true);
+  btn.addEventListener('click', ()=>{           // depois do app limpar
+    if(!guardado) return;
+    const g=guardado; guardado=null;
+    setTimeout(()=>{
+      const ids=Object.keys(g.campos);
+      // convênio primeiro, para o app preencher Registro ANS e logo
+      ids.sort((a,b)=>(a==='convenio'?-1:b==='convenio'?1:0)).forEach(id=>{
+        const el=doc.getElementById(id); if(!el) return;
+        el.value = g.campos[id] || '';
+        el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true}));
+      });
+      if(g.locais){
+        const cs=[...doc.querySelectorAll('.local-check')];
+        cs.forEach((c,i)=>{ c.checked=!!g.locais[i]; });
+        if(cs[0]) cs[0].dispatchEvent(new Event('change',{bubbles:true}));
+      }
+    }, 0);
+  });
 }
 
 document.addEventListener('keydown', e=>{
