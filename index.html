@@ -1240,7 +1240,6 @@ function imprimirEvolucao(e){
   @media print{ .barra{display:none;} }
   @media screen{ body{max-width:800px;margin:0 auto;padding:0 20px 30px;} }
 </style></head><body>
-<div class="barra"><button onclick="window.print()">🖨 Imprimir</button><button onclick="window.close()" style="background:#555">Fechar</button></div>
 <div class="head">
   ${logo?`<img src="${logo}" alt="">`:''}
   <div><p class="nome">Dr. Luiz Filipe Woellner</p><p class="esp">CIRURGIA VASCULAR</p><div class="crm">CRM-PR 42978 &nbsp;|&nbsp; RQE 33968</div></div>
@@ -1251,11 +1250,24 @@ function imprimirEvolucao(e){
 <div class="texto">${esc(e.texto)}</div>
 <div class="ass">Dr. Luiz Filipe Woellner · CRM-PR 42978</div>
 <div class="imp">Impresso em ${esc(new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}))}</div>
-<script>window.addEventListener('load',()=>setTimeout(()=>window.print(),300));<\/script>
 </body></html>`;
-  const w=window.open('', '_blank');
-  if(!w){ toast('O navegador bloqueou a janela de impressão — permita pop-ups para este site.', true); return; }
-  w.document.open(); w.document.write(html); w.document.close();
+  // imprime por um quadro invisível na própria página (uma janela separada chamando
+  // print() travava a página do prontuário no Chrome)
+  const antigo=$('quadroImpressao'); if(antigo) antigo.remove();
+  const fr=document.createElement('iframe');
+  fr.id='quadroImpressao';
+  fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+  fr.onload=()=>{
+    const w=fr.contentWindow;
+    const limpar=()=>setTimeout(()=>{ if(fr.isConnected) fr.remove(); }, 1000);
+    w.addEventListener('afterprint', limpar);
+    const imgs=[...fr.contentDocument.images];
+    Promise.all(imgs.map(i=>i.complete?null:new Promise(r=>{ i.onload=i.onerror=r; }))).then(()=>{
+      setTimeout(()=>{ try{ w.focus(); w.print(); }catch(e){ console.error(e); toast('Não consegui abrir a impressão.', true); } }, 50);
+    });
+  };
+  fr.srcdoc=html;
+  document.body.appendChild(fr);
 }
 
 function limparEvolucao(){
@@ -1794,7 +1806,7 @@ function renderListaDocs(){
   const comEtiqueta = abaAtual==='guias';
   el.innerHTML = lista.map(x=>`
     <tr>
-      <td class="nm">${comEtiqueta?`<span class="badge b-${esc(x.ferramenta)}">${esc(x.categoria)}</span> `:''}${esc(x.descricao||'')}<small>${esc(x.nome)}</small></td>
+      <td class="nm">${comEtiqueta?`<span class="badge b-${esc(x.ferramenta)}">${esc(x.categoria)}</span> `:''}${esc(x.descricao||'')}${(x.locais&&x.locais.length)?` ${x.locais.map(l=>`<span class="tag-local">${esc(l)}</span>`).join(' ')}`:''}<small>${esc(x.nome)}</small></td>
       <td>${esc(fmtBR(x.dataDoc))}<small style="display:block;color:var(--muted)">${x.ts?new Date(x.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):''}</small></td>
       <td>${esc(fmtTam(x.tamanho||0))}</td>
       <td class="acts"><button onclick="verArquivo('documentos','${x.id}')">Ver</button><button onclick="baixarArquivo('documentos','${x.id}')">Baixar</button><button class="del" onclick="excluirArquivo('documentos','${x.id}')">Excluir</button></td>
@@ -1854,12 +1866,21 @@ async function carregarHtml(k){
 
 function dadosPreenchimento(){
   const p=pacAtual||{};
-  return { nome:p.nome||'', carteira:p.carteira||'', convenio:p.convenio||'', telefone:p.telefone||'', locais:locaisDe(p) };
+  return { nome:p.nome||'', carteira:p.carteira||'', convenio:p.convenio||'', telefone:p.telefone||'', locais:locaisDaReceita() };
+}
+// local que vai no rodapé da receita: o local escolhido no filtro da lista (onde você está atendendo);
+// com "Todos os locais", usa os locais marcados no cadastro do paciente
+function localDoFiltro(){ const f=$('filtroLocal').value; return LOCAIS.includes(f) ? f : ''; }
+function locaisDaReceita(){
+  const f=localDoFiltro();
+  if(f) return [f];
+  return pacAtual ? locaisDe(pacAtual) : [];
 }
 
 async function abrirFerramenta(k){
   $('toolOverlay').classList.remove('hidden');
-  $('toolPac').innerHTML = pacAtual ? 'Paciente: <b>'+esc(pacAtual.nome)+'</b>' : '<i>Sem paciente selecionado</i>';
+  const locs=locaisDaReceita();
+  $('toolPac').innerHTML = pacAtual ? 'Paciente: <b>'+esc(pacAtual.nome)+'</b>' + (k==='receita' && locs.length ? ' · Local: <b>'+esc(locs.join(', '))+'</b>' : '') : '<i>Sem paciente selecionado</i>';
   document.querySelectorAll('#toolTabs button').forEach(b=>b.classList.toggle('active', b.dataset.k===k));
   const dados=dadosPreenchimento(), chave=(pacAtual?pacAtual.id:'-')+'|'+JSON.stringify(dados);
   let f=FERR[k];
@@ -1983,12 +2004,17 @@ async function capturarPdf(k, iframe, f, blobIframe){
     const cat = CATEGORIAS[k], hoje = hojeISO();
     const nome = `${cat.replace('/','-')} - ${f.pacNome} - ${fmtBR(hoje).replace(/\//g,'-')}.pdf`;
     await salvarArquivo(f.pid, 'documentos', blob, {
-      nome, ferramenta:k, categoria:cat, dataDoc:hoje, descricao:resumoDocumento(k, iframe)
+      nome, ferramenta:k, categoria:cat, dataDoc:hoje, descricao:resumoDocumento(k, iframe),
+      locais: k==='receita' ? locaisMarcadosNaReceita(iframe) : []
     });
     toast(`${cat} salv${k==='orcamento'?'o':'a'} no prontuário de ${f.pacNome.split(' ')[0]}.`);
   }catch(e){ f.ultimaImpressao=null; erroFirebase(e); }
 }
 
+function locaisMarcadosNaReceita(iframe){
+  try{ return [...iframe.contentDocument.querySelectorAll('.local-check')].filter(c=>c.checked).map(c=>LOCAIS[parseInt(c.value,10)]).filter(Boolean); }
+  catch(e){ return []; }
+}
 // uma linha de resumo para identificar o documento na lista
 function resumoDocumento(k, iframe){
   try{
