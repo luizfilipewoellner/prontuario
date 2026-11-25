@@ -269,13 +269,6 @@
 <div id="app">
   <div id="topbar">
     <div class="brand">Prontuário <span>Dr. Luiz Filipe Woellner</span></div>
-    <div class="ferr">
-      <button class="rxb" onclick="abrirFerramenta('receita')">Receituário</button>
-      <button onclick="abrirFerramenta('sadt')">SP/SADT</button>
-      <button onclick="abrirFerramenta('internacao')">Internação</button>
-      <button onclick="abrirFerramenta('opme')">OPME</button>
-      <button onclick="abrirFerramenta('orcamento')">Orçamento</button>
-    </div>
     <div class="right"><span id="userEmail"></span><button id="sairBtn" onclick="sair()">Sair</button></div>
   </div>
   <div id="layout">
@@ -800,10 +793,10 @@ function renderVazio(){
 /* ======================================================================
    PACIENTE SELECIONADO
    ====================================================================== */
-function selecionarPaciente(id){
+function selecionarPaciente(id, aba){
   const p = PACIENTES.find(x=>x.id===id); if(!p) return;
   pacAtual = p; evoEditando=null;
-  if(abaAtual==='dados') abaAtual='evolucao';
+  abaAtual = aba || 'dados';   // ao escolher um paciente, abre em "Dados do paciente"
   renderLista();
   renderPaciente();
   pararListenersPaciente();
@@ -820,7 +813,7 @@ function selecionarPaciente(id){
   }, erroFirebase);
   unsubDoc = PAC.doc(id).collection('documentos').orderBy('ts','desc').onSnapshot(s=>{
     DOCUMENTOS = s.docs.map(d=>({id:d.id,...d.data()})).filter(e=>e.completo);
-    atualizarContagens(); if(abaAtual==='documentos'||abaAtual==='orcamentos') renderListaDocs();
+    atualizarContagens(); if(ABAS_DOCS[abaAtual]) renderListaDocs();
   }, erroFirebase);
   FOTOS=[];
   unsubFotos = PAC.doc(id).collection('fotos').orderBy('ts','desc').onSnapshot(s=>{
@@ -840,12 +833,13 @@ function renderPaciente(){
   $('main').innerHTML = `
     <div class="card pac-head" id="cabecalho"></div>
     <div class="tabs">
+      <button data-a="dados" onclick="trocarAba('dados')">Dados do paciente</button>
       <button data-a="evolucao" onclick="trocarAba('evolucao')">Evolução<span class="cnt" id="cntEvo">0</span></button>
       <button data-a="exames" onclick="trocarAba('exames')">Exames<span class="cnt" id="cntEx">0</span></button>
-      <button data-a="documentos" onclick="trocarAba('documentos')">Receitas e guias<span class="cnt" id="cntDoc">0</span></button>
+      <button data-a="receitas" onclick="trocarAba('receitas')">Receitas<span class="cnt" id="cntRec">0</span></button>
+      <button data-a="guias" onclick="trocarAba('guias')">Guias<span class="cnt" id="cntGuias">0</span></button>
       <button data-a="fotos" onclick="trocarAba('fotos')">Fotos<span class="cnt" id="cntFotos">0</span></button>
       <button data-a="orcamentos" onclick="trocarAba('orcamentos')">Orçamentos<span class="cnt" id="cntOrc">0</span></button>
-      <button data-a="dados" onclick="trocarAba('dados')">Dados do paciente</button>
     </div>
     <div id="abaConteudo"></div>`;
   renderCabecalho();
@@ -880,8 +874,9 @@ function renderCabecalho(){
 function atualizarContagens(){
   if($('cntEvo')) $('cntEvo').textContent=EVOLUCOES.length;
   if($('cntEx')) $('cntEx').textContent=EXAMES.length;
-  if($('cntDoc')) $('cntDoc').textContent=DOCUMENTOS.filter(d=>d.ferramenta!=='orcamento').length;
-  if($('cntOrc')) $('cntOrc').textContent=DOCUMENTOS.filter(d=>d.ferramenta==='orcamento').length;
+  if($('cntRec')) $('cntRec').textContent=DOCUMENTOS.filter(ABAS_DOCS.receitas.filtro).length;
+  if($('cntGuias')) $('cntGuias').textContent=DOCUMENTOS.filter(ABAS_DOCS.guias.filtro).length;
+  if($('cntOrc')) $('cntOrc').textContent=DOCUMENTOS.filter(ABAS_DOCS.orcamentos.filtro).length;
   if($('cntFotos')) $('cntFotos').textContent=FOTOS.length;
 }
 
@@ -890,7 +885,7 @@ function trocarAba(a){
   document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active', b.dataset.a===a));
   if(a==='evolucao') renderAbaEvolucao();
   else if(a==='exames') renderAbaExames();
-  else if(a==='documentos' || a==='orcamentos') renderAbaDocs();
+  else if(ABAS_DOCS[a]) renderAbaDocs();
   else if(a==='fotos') renderAbaFotos();
   else renderFormDados(pacAtual);
   atualizarContagens();
@@ -1009,7 +1004,7 @@ async function salvarPaciente(){
       toast('Paciente cadastrado.');
       if(!PACIENTES.some(x=>x.id===ref.id)){ PACIENTES.push({id:ref.id,...dados}); }
       abaAtual='evolucao';
-      selecionarPaciente(ref.id);
+      selecionarPaciente(ref.id, 'evolucao');   // recém-cadastrado: já vai para a evolução
     }
   }catch(e){ erroFirebase(e); btn.disabled=false; btn.textContent='Salvar'; }
 }
@@ -1063,6 +1058,7 @@ function renderAbaEvolucao(){
       <div class="actions">
         <button class="btn pri" id="evoSalvarBtn" onclick="salvarEvolucao()">${evoEditando?'Atualizar':'Salvar evolução'}</button>
         <button class="btn sec" onclick="limparEvolucao()" title="Apaga o que está digitado (não mexe nas evoluções já salvas)">Limpar</button>
+        <button class="btn sec" onclick="imprimirEvolucaoDigitada()" title="Imprime o texto que está sendo digitado">🖨 Imprimir</button>
         <button class="btn sec" onclick="copiarParaHospital($('evoTexto').value)" title="Copia o cabeçalho com os antecedentes + o texto digitado, para colar no sistema do hospital">📋 Copiar para o hospital</button>
         ${evoEditando?'<button class="btn sec" onclick="cancelarEdicaoEvo()">Cancelar</button>':''}
       </div>
@@ -1078,7 +1074,7 @@ function renderListaEvo(){
     <div class="evo">
       <div class="h"><span class="d">${esc(fmtBR(e.data))}</span><span class="t">${esc(e.tipo||'')}</span>
         <span class="spacer"></span>
-        <a onclick="copiarEvolucao('${e.id}')" title="Copia o texto para uma nova evolução de hoje">copiar</a><a onclick="copiarParaHospital(EVOLUCOES.find(x=>x.id==='${e.id}').texto)" title="Copia com o cabeçalho de antecedentes, para colar no sistema do hospital">📋 hospital</a><a onclick="editarEvolucao('${e.id}')">editar</a><a onclick="excluirEvolucao('${e.id}')">excluir</a></div>
+        <a onclick="copiarEvolucao('${e.id}')" title="Copia o texto para uma nova evolução de hoje">copiar</a><a onclick="copiarParaHospital(EVOLUCOES.find(x=>x.id==='${e.id}').texto)" title="Copia com o cabeçalho de antecedentes, para colar no sistema do hospital">📋 hospital</a><a onclick="imprimirEvolucao(EVOLUCOES.find(x=>x.id==='${e.id}'))" title="Abre a evolução pronta para imprimir">🖨 imprimir</a><a onclick="editarEvolucao('${e.id}')">editar</a><a onclick="excluirEvolucao('${e.id}')">excluir</a></div>
       <div class="x">${esc(e.texto)}</div>
       ${(()=>{ const fs=FOTOS.filter(f=>f.dataFoto===e.data); return fs.length ? `<div class="evo-fotos">${fs.map(f=>`<img src="${f.miniatura}" title="${esc(f.regiao||'')}" onclick="abrirFoto('${f.id}', FOTOS.filter(x=>x.dataFoto==='${e.data}').map(x=>x.id))">`).join('')}</div>` : ''; })()}
     </div>`).join('');
@@ -1189,6 +1185,77 @@ async function excluirModeloEvo(){
   if(!confirm(`Excluir o modelo "${m.nome}"?`)) return;
   try{ await db.collection('modelos_evolucao').doc(m.id).delete(); toast('Modelo excluído.'); }
   catch(e){ erroFirebase(e); }
+}
+
+/* ---------- imprimir evolução ---------- */
+let logoCache=null;
+function logoReceituario(){
+  if(logoCache!==null) return logoCache;
+  try{ const m=b64ToUtf8(window.B64_receita).match(/LOGO_DATA_URI = "([^"]+)"/); logoCache=m?m[1]:''; }catch(e){ logoCache=''; }
+  return logoCache;
+}
+function msEvolucao(e){
+  if(e.ts) return e.ts;
+  if(e.criadoEm && e.criadoEm.toMillis) return e.criadoEm.toMillis();
+  if(typeof e.criadoEm==='number') return e.criadoEm;
+  return null;
+}
+function imprimirEvolucaoDigitada(){
+  const texto=$('evoTexto').value.trim();
+  if(!texto){ toast('Escreva a evolução antes de imprimir.', true); return; }
+  imprimirEvolucao({ data:$('evoData').value||hojeISO(), tipo:$('evoTipo').value, texto,
+                     ts: evoEditando ? msEvolucao(evoEditando) : Date.now() });
+}
+function imprimirEvolucao(e){
+  if(!e || !pacAtual) return;
+  const p=pacAtual, ms=msEvolucao(e), quando=ms?new Date(ms):null;
+  const hora = quando ? quando.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+  const diaRegistro = quando ? `${quando.getFullYear()}-${String(quando.getMonth()+1).padStart(2,'0')}-${String(quando.getDate()).padStart(2,'0')}` : '';
+  let linhaData = `<b>${esc(fmtBR(e.data))}</b>${hora && diaRegistro===e.data ? ` às <b>${hora}</b>` : ''}`;
+  if(hora && diaRegistro!==e.data) linhaData += ` <span class="reg">(registrada em ${esc(fmtBR(diaRegistro))} às ${hora})</span>`;
+  const ident=[ p.nascimento?`${idade(p.nascimento)} (${fmtBR(p.nascimento)})`:'', p.convenio?`${p.convenio}${p.carteira?' · '+p.carteira:''}`:'' ].filter(Boolean).map(esc).join(' &nbsp;·&nbsp; ');
+  const logo=logoReceituario();
+  const html=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Evolução - ${esc(p.nome)} - ${esc(fmtBR(e.data))}</title>
+<style>
+  @page{size:A4;margin:16mm 16mm 18mm;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:'Segoe UI',Arial,sans-serif;color:#2e3440;font-size:12.5pt;}
+  .head{display:flex;align-items:center;gap:16px;padding-bottom:12px;border-bottom:3px solid #7a2036;}
+  .head img{width:70px;height:70px;}
+  .nome{font-family:Georgia,serif;font-weight:700;font-size:20pt;color:#1b2942;margin:0;}
+  .esp{font-size:9.5pt;font-weight:700;letter-spacing:.09em;color:#7a2036;margin:2px 0;}
+  .crm{font-size:9.5pt;color:#6b6b6b;}
+  h1{font-size:11pt;letter-spacing:.14em;color:#7a2036;margin:18px 0 10px;text-transform:uppercase;}
+  .pac{border:1px solid #dcd7cf;border-radius:6px;padding:10px 14px;}
+  .pac .n{font-size:14pt;font-weight:700;color:#1b2942;}
+  .pac .i{font-size:10.5pt;color:#555;margin-top:3px;}
+  .quando{margin:14px 0 4px;font-size:11.5pt;}
+  .quando .tipo{display:inline-block;margin-left:10px;background:#efe9e0;border-radius:4px;padding:1px 8px;font-size:10pt;}
+  .quando .reg{color:#777;font-size:10pt;}
+  .texto{white-space:pre-wrap;line-height:1.55;margin-top:10px;font-size:12pt;}
+  .ass{margin-top:60px;width:60%;margin-left:auto;text-align:center;border-top:1px solid #1b2942;padding-top:6px;font-size:10pt;color:#555;page-break-inside:avoid;}
+  .imp{color:#999;font-size:8.5pt;margin-top:24px;text-align:right;}
+  .barra{position:sticky;top:0;background:#1b2942;padding:10px;text-align:center;margin:-0px 0 16px;}
+  .barra button{background:#7a2036;color:#fff;border:none;border-radius:6px;padding:9px 18px;font-size:14px;font-weight:700;cursor:pointer;margin:0 4px;}
+  @media print{ .barra{display:none;} }
+  @media screen{ body{max-width:800px;margin:0 auto;padding:0 20px 30px;} }
+</style></head><body>
+<div class="barra"><button onclick="window.print()">🖨 Imprimir</button><button onclick="window.close()" style="background:#555">Fechar</button></div>
+<div class="head">
+  ${logo?`<img src="${logo}" alt="">`:''}
+  <div><p class="nome">Dr. Luiz Filipe Woellner</p><p class="esp">CIRURGIA VASCULAR</p><div class="crm">CRM-PR 42978 &nbsp;|&nbsp; RQE 33968</div></div>
+</div>
+<h1>Evolução</h1>
+<div class="pac"><div class="n">${esc(p.nome)}</div>${ident?`<div class="i">${ident}</div>`:''}</div>
+<div class="quando">${linhaData}${e.tipo?`<span class="tipo">${esc(e.tipo)}</span>`:''}</div>
+<div class="texto">${esc(e.texto)}</div>
+<div class="ass">Dr. Luiz Filipe Woellner · CRM-PR 42978</div>
+<div class="imp">Impresso em ${esc(new Date().toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}))}</div>
+<script>window.addEventListener('load',()=>setTimeout(()=>window.print(),300));<\/script>
+</body></html>`;
+  const w=window.open('', '_blank');
+  if(!w){ toast('O navegador bloqueou a janela de impressão — permita pop-ups para este site.', true); return; }
+  w.document.open(); w.document.write(html); w.document.close();
 }
 
 function limparEvolucao(){
@@ -1679,24 +1746,37 @@ const verExame=id=>verArquivo('exames',id), baixarExame=id=>baixarArquivo('exame
    ====================================================================== */
 const CATEGORIAS = { receita:'Receita', sadt:'SP/SADT', internacao:'Internação', opme:'OPME', orcamento:'Orçamento' };
 
+// abas que listam documentos gerados (receitas, guias, orçamentos)
+const ABAS_DOCS = {
+  receitas:   { filtro:d=>d.ferramenta==='receita', titulo:'Receita', vazio:'Nenhuma receita salva ainda.' },
+  guias:      { filtro:d=>['sadt','internacao','opme'].includes(d.ferramenta), titulo:'Guia', vazio:'Nenhuma guia salva ainda.' },
+  orcamentos: { filtro:d=>d.ferramenta==='orcamento', titulo:'Orçamento', vazio:'Nenhum orçamento salvo ainda.' }
+};
 function renderAbaDocs(){
-  const orc = abaAtual==='orcamentos';
-  $('abaConteudo').innerHTML = orc ? `
-    <div class="card">
-      <div class="actions" style="margin:0 0 14px">
-        <button class="btn pri" onclick="abrirFerramenta('orcamento')">+ Novo orçamento</button>
-        <span style="color:var(--muted);font-size:12.5px">Abre o seu app de orçamento já com nome e telefone do paciente. Ao clicar em "Salvar no histórico", "Gerar PDF" ou "Imprimir", o orçamento é salvo aqui.</span>
-      </div>
-      <div id="dropZone">Já tem o PDF do orçamento? Arraste aqui ou <b>clique para escolher</b></div>
-      <div id="upStatus"></div>
-    </div>
-    <div class="card" style="padding:6px 10px"><table class="ex-table"><thead><tr><th>Orçamento</th><th>Data</th><th>Tamanho</th><th></th></tr></thead><tbody id="listaDocs"></tbody></table></div>`
-  : `
-    <div style="color:var(--muted);font-size:12.5px;margin:-4px 0 12px">
-      Cada receita ou guia gerada (botão de PDF ou de imprimir) é salva aqui automaticamente.
-    </div>
-    <div class="card" style="padding:6px 10px"><table class="ex-table"><thead><tr><th>Documento</th><th>Data</th><th>Tamanho</th><th></th></tr></thead><tbody id="listaDocs"></tbody></table></div>`;
-  if(orc){
+  const aba=abaAtual, cfg=ABAS_DOCS[aba];
+  const topo = {
+    receitas: `<div class="card"><div class="actions" style="margin:0">
+        <button class="btn pri" onclick="abrirFerramenta('receita')">+ Nova receita</button>
+        <span style="color:var(--muted);font-size:12.5px">Abre o receituário já com o nome do paciente. Ao clicar em "Baixar PDF" ou "Imprimir", a receita é salva aqui.</span>
+      </div></div>`,
+    guias: `<div class="card"><div class="actions" style="margin:0;flex-wrap:wrap">
+        <button class="btn pri" onclick="abrirFerramenta('sadt')">+ SP/SADT</button>
+        <button class="btn pri" onclick="abrirFerramenta('internacao')">+ Internação</button>
+        <button class="btn pri" onclick="abrirFerramenta('opme')">+ OPME</button>
+        <span style="color:var(--muted);font-size:12.5px">Abre a guia com nome, carteirinha e convênio. Ao gerar o PDF ou imprimir, a guia é salva aqui.</span>
+      </div></div>`,
+    orcamentos: `<div class="card">
+        <div class="actions" style="margin:0 0 14px">
+          <button class="btn pri" onclick="abrirFerramenta('orcamento')">+ Novo orçamento</button>
+          <span style="color:var(--muted);font-size:12.5px">Abre o seu app de orçamento já com nome e telefone do paciente. Ao clicar em "Salvar no histórico", "Gerar PDF" ou "Imprimir", o orçamento é salvo aqui.</span>
+        </div>
+        <div id="dropZone">Já tem o PDF do orçamento? Arraste aqui ou <b>clique para escolher</b></div>
+        <div id="upStatus"></div>
+      </div>`
+  }[aba];
+  $('abaConteudo').innerHTML = topo + `
+    <div class="card" style="padding:6px 10px"><table class="ex-table"><thead><tr><th>${cfg.titulo}</th><th>Data</th><th>Tamanho</th><th></th></tr></thead><tbody id="listaDocs"></tbody></table></div>`;
+  if(aba==='orcamentos'){
     const dz=$('dropZone'), inp=document.createElement('input');
     inp.type='file'; inp.accept='application/pdf'; inp.multiple=true;
     inp.onchange=()=>{ enviarOrcamentos(inp.files); inp.value=''; };
@@ -1708,13 +1788,13 @@ function renderAbaDocs(){
   renderListaDocs();
 }
 function renderListaDocs(){
-  const el=$('listaDocs'); if(!el) return;
-  const orc = abaAtual==='orcamentos';
-  const lista = DOCUMENTOS.filter(d=> orc ? d.ferramenta==='orcamento' : d.ferramenta!=='orcamento');
-  if(!lista.length){ el.innerHTML=`<tr><td colspan="4" style="color:var(--muted)">${orc?'Nenhum orçamento salvo ainda.':'Nenhuma receita ou guia salva ainda.'}</td></tr>`; return; }
+  const el=$('listaDocs'), cfg=ABAS_DOCS[abaAtual]; if(!el || !cfg) return;
+  const lista = DOCUMENTOS.filter(cfg.filtro);
+  if(!lista.length){ el.innerHTML=`<tr><td colspan="4" style="color:var(--muted)">${cfg.vazio}</td></tr>`; return; }
+  const comEtiqueta = abaAtual==='guias';
   el.innerHTML = lista.map(x=>`
     <tr>
-      <td class="nm">${orc?'':`<span class="badge b-${esc(x.ferramenta)}">${esc(x.categoria)}</span> `}${esc(x.descricao||'')}<small>${esc(x.nome)}</small></td>
+      <td class="nm">${comEtiqueta?`<span class="badge b-${esc(x.ferramenta)}">${esc(x.categoria)}</span> `:''}${esc(x.descricao||'')}<small>${esc(x.nome)}</small></td>
       <td>${esc(fmtBR(x.dataDoc))}<small style="display:block;color:var(--muted)">${x.ts?new Date(x.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):''}</small></td>
       <td>${esc(fmtTam(x.tamanho||0))}</td>
       <td class="acts"><button onclick="verArquivo('documentos','${x.id}')">Ver</button><button onclick="baixarArquivo('documentos','${x.id}')">Baixar</button><button class="del" onclick="excluirArquivo('documentos','${x.id}')">Excluir</button></td>
@@ -1801,7 +1881,10 @@ async function abrirFerramenta(k){
   }
   for(const key in FERR) FERR[key].iframe.classList.toggle('active', key===k);
 }
-function fecharFerramentas(){ $('toolOverlay').classList.add('hidden'); }
+function fecharFerramentas(){
+  $('toolOverlay').classList.add('hidden');
+  if(pacAtual && ABAS_DOCS[abaAtual]) renderListaDocs();
+}
 
 /* ---------- captura dos PDFs gerados ----------
    - Guias: todo PDF que o app cria (botão "Gerar guia em PDF" ou "Imprimir")
